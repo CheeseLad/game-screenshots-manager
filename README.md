@@ -1,0 +1,1 @@
+# game-screenshots-manager
