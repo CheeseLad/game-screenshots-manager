@@ -1,5 +1,6 @@
 import json
 import os
+import subprocess
 import send2trash
 import requests
 import shutil
@@ -108,10 +109,13 @@ def make_game_folders():
                         if not HIDE_SKIP_MESSAGES:
                             print(f"Skipping {file} (already exists)")
 
+
 def copy_minecraft_screenshots_folder(screenshots_path, install_dir):
     dest_dir = os.path.join("Minecraft Installs", install_dir)
     if len(os.listdir(screenshots_path)) == 0:
-        print(f"{len(os.listdir(screenshots_path))} files in {screenshots_path}, skipping...")
+        print(
+            f"{len(os.listdir(screenshots_path))} files in {screenshots_path}, skipping..."
+        )
         return
     os.makedirs(dest_dir, exist_ok=True)
     for file in os.listdir(screenshots_path):
@@ -125,6 +129,7 @@ def copy_minecraft_screenshots_folder(screenshots_path, install_dir):
                 if not HIDE_SKIP_MESSAGES:
                     print(f"Skipping {file} (already exists)")
 
+
 def copy_minecraft_screenshots():
     os.makedirs("Minecraft Installs", exist_ok=True)
     for path in MINECRAFT_INSTALLS_PATHS:
@@ -132,35 +137,44 @@ def copy_minecraft_screenshots():
         for install_dir in os.listdir(path):
             install_path = os.path.join(path, install_dir)
             if os.path.isdir(install_path):
-                screenshots_path = os.path.join(install_path, "minecraft", "screenshots")
+                screenshots_path = os.path.join(
+                    install_path, "minecraft", "screenshots"
+                )
                 if os.path.exists(screenshots_path):
                     print(f"Found screenshots for {install_dir}, copying...")
                     copy_minecraft_screenshots_folder(screenshots_path, install_dir)
                 else:
-                    print(f"No screenshots found for {install_dir}, trying .minecraft folder...")
-                    screenshots_path = os.path.join(install_path, ".minecraft", "screenshots")
+                    print(
+                        f"No screenshots found for {install_dir}, trying .minecraft folder..."
+                    )
+                    screenshots_path = os.path.join(
+                        install_path, ".minecraft", "screenshots"
+                    )
                     if os.path.exists(screenshots_path):
-                        print(f"Found screenshots in .minecraft for {install_dir}, copying...")
+                        print(
+                            f"Found screenshots in .minecraft for {install_dir}, copying..."
+                        )
                         copy_minecraft_screenshots_folder(screenshots_path, install_dir)
                     else:
                         print(f"No screenshots found for {install_dir}, skipping...")
                         continue
 
+
 def network_drive_copy():
-    for dir in os.listdir("."):
-        if os.path.isdir(dir):
-            dest_dir = os.path.join(NETWORK_DRIVE_PATH, dir)
-            os.makedirs(dest_dir, exist_ok=True)
-            for file in os.listdir(dir):
-                source_file = os.path.join(dir, file)
-                dest_file = os.path.join(dest_dir, file)
-                if os.path.isfile(source_file):
-                    if not os.path.exists(dest_file):
-                        print(f"Copying {file} to {dest_dir}")
-                        shutil.copy2(source_file, dest_file)
-                    else:
-                        if not HIDE_SKIP_MESSAGES:
-                            print(f"Skipping {file} (already exists)")
+
+    command = [
+        "rclone",
+        "sync",
+        r"D:\Game Screenshots",
+        r"Z:\Photos & Videos\Game Screenshots",
+        "-v",
+        "--checkers",
+        "16",
+        "--exclude",
+        ".git/**",
+    ]
+
+    subprocess.run(command)
 
 
 if __name__ == "__main__":
