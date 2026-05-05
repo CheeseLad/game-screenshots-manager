@@ -17,16 +17,18 @@ NETWORK_DRIVE_COPY = True
 HIDE_SKIP_MESSAGES = True
 
 STEAM_SCREENSHOTS_PATHS = [
-    f"C:\\Program Files (x86)\\Steam\\userdata\\{STEAM_USER_ID}\\760\\remote",
-    f"H:\\Program Files (x86)\\Steam\\userdata\\{STEAM_USER_ID}\\760\\remote",
+    rf"C:\Program Files (x86)\Steam\userdata\{STEAM_USER_ID}\760\remote",
+    rf"H:\Program Files (x86)\Steam\userdata\{STEAM_USER_ID}\760\remote",
+    rf"D:\Backups\Desktops\2nd 80GB HDD\Steam\userdata\{STEAM_USER_ID}\760\remote"
 ]
 
 MINECRAFT_INSTALLS_PATHS = [
-    "E:\\Minecraft Installs",
-    "D:\\Minecraft Installs",
+    rf"E:\Minecraft Installs",
+    rf"D:\Minecraft Installs",
 ]
 
-NETWORK_DRIVE_PATH = "Z:\\Photos & Videos\\Game Screenshots"
+GAMS_SCREENSHOTS_PATH = rf"D:\Game Screenshots"
+NETWORK_DRIVE_PATH = rf"Z:\Photos & Videos\Game Screenshots"
 
 
 def create_app_id_cache():
@@ -165,8 +167,8 @@ def network_drive_copy():
     command = [
         "rclone",
         "sync",
-        r"D:\Game Screenshots",
-        r"Z:\Photos & Videos\Game Screenshots",
+        GAMS_SCREENSHOTS_PATH,
+        NETWORK_DRIVE_PATH,
         "-v",
         "--checkers",
         "16",
