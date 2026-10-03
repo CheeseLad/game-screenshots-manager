@@ -23,7 +23,7 @@ STEAM_SCREENSHOTS_PATHS = [
 ]
 
 MINECRAFT_INSTALLS_PATHS = [
-    rf"E:\Minecraft Installs",
+    rf"C:\Users\jake_\Desktop\Minecraft Installs",
     rf"D:\Minecraft Installs",
 ]
 
@@ -39,14 +39,16 @@ def create_app_id_cache():
 
 def recycle_thumbnails():
     print("Recycling thumbnail directories...")
-    for dir in os.listdir("."):
-        if os.path.isdir(dir):
-            for subdir in os.listdir(dir):
-                if os.path.isdir(os.path.join(dir, subdir)) and subdir.startswith(
+    for dir in os.listdir(GAMS_SCREENSHOTS_PATH):
+        full_dir = os.path.join(GAMS_SCREENSHOTS_PATH, dir)
+        if os.path.isdir(full_dir):
+            for subdir in os.listdir(full_dir):
+                full_subdir = os.path.join(full_dir, subdir)
+                if os.path.isdir(full_subdir) and subdir.startswith(
                     "thumbnail"
                 ):
-                    print(f"Recycling {os.path.join(dir, subdir)}")
-                    send2trash.send2trash(os.path.join(dir, subdir))
+                    print(f"Recycling {full_subdir}")
+                    send2trash.send2trash(full_subdir)
 
 
 def make_game_folders():
@@ -94,14 +96,15 @@ def make_game_folders():
                 .replace("!", "")
                 .strip()
             )
+            dest_dir = os.path.join(GAMS_SCREENSHOTS_PATH, parsed_game_name)
             print(f"Creating folder for {parsed_game_name} (App ID: {app_id})")
-            os.makedirs(parsed_game_name, exist_ok=True)
+            os.makedirs(dest_dir, exist_ok=True)
 
             source_dir = os.path.join(steam_screenshots_path, app_id_dir, "screenshots")
 
             for file in os.listdir(source_dir):
                 source_file = os.path.join(source_dir, file)
-                dest_file = os.path.join(parsed_game_name, file)
+                dest_file = os.path.join(dest_dir, file)
 
                 if os.path.isfile(source_file):
                     if not os.path.exists(dest_file):
@@ -113,7 +116,7 @@ def make_game_folders():
 
 
 def copy_minecraft_screenshots_folder(screenshots_path, install_dir):
-    dest_dir = os.path.join("Minecraft Installs", install_dir)
+    dest_dir = os.path.join(GAMS_SCREENSHOTS_PATH, "Minecraft Installs", install_dir)
     if len(os.listdir(screenshots_path)) == 0:
         print(
             f"{len(os.listdir(screenshots_path))} files in {screenshots_path}, skipping..."
@@ -133,7 +136,7 @@ def copy_minecraft_screenshots_folder(screenshots_path, install_dir):
 
 
 def copy_minecraft_screenshots():
-    os.makedirs("Minecraft Installs", exist_ok=True)
+    os.makedirs(os.path.join(GAMS_SCREENSHOTS_PATH, "Minecraft Installs"), exist_ok=True)
     for path in MINECRAFT_INSTALLS_PATHS:
         print(f"Processing Minecraft installs in {path}...")
         for install_dir in os.listdir(path):
